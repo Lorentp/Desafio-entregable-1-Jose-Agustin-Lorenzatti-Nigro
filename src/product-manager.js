@@ -60,8 +60,9 @@ class ProductManager {
     console.log(this.products);
   }
 
-  /*async getProductsById(id) {
+  async getProductsById(id) {
     try {
+      const arrayProducts = await this.readFile();
       const product = arrayProducts.find((item) => item.id === id);
       if (!product) {
         console.alert("Lo sentimos, producto no encontrado");
@@ -71,7 +72,8 @@ class ProductManager {
       }
     } catch (error) {
       console.log("N se pudo leer el archivo", error);
-    }*/
+    }
+  }
 
   async updateProduct(id, updatedProduct) {
     try {

@@ -27,7 +27,7 @@ class ProductManager {
   }
 
   async addProduct(newObj) {
-    let { title, description, price, image, code, stock } = newObj;
+    let { title, description, price, image, code, stock, category } = newObj;
 
     if (this.products.some((item) => item.code === code)) {
       console.log("Dos productos no pueden compartir el mismo codigo.");
@@ -41,6 +41,7 @@ class ProductManager {
       image,
       code,
       stock,
+      category,
       id: ++ProductManager.lastId,
     };
 
@@ -56,8 +57,14 @@ class ProductManager {
     await this.saveFile(this.products);
   }
 
-  getProducts() {
-    console.log(this.products);
+  async getProducts() {
+    try {
+      const response = await fs.readFile(this.products, "utf8");
+      const responseJSON = JSON.parse(response);
+      return responseJSON;
+    } catch (error) {
+      console.log("Ha ocurrido un error", error);
+    }
   }
 
   async getProductsById(id) {
@@ -65,7 +72,7 @@ class ProductManager {
       const arrayProducts = await this.readFile();
       const product = arrayProducts.find((item) => item.id === id);
       if (!product) {
-        console.alert("Lo sentimos, producto no encontrado");
+        console.log("Lo sentimos, producto no encontrado");
       } else {
         console.log("Su producto es: ");
         return product;
@@ -75,14 +82,15 @@ class ProductManager {
     }
   }
 
-  async updateProduct(id, updatedProduct) {
+  async updateProduct(id, { ...data }) {
     try {
-      const arrayProducts = await this.readFile();
-      const index = arrayProducts.findIndex((item) => item.id === id);
+      const response = await this.getProducts();
+      const index = response.findIndex((item) => item.id == id);
 
       if (index !== -1) {
-        arrayProducts.splice(index, 1, updatedProduct);
-        await this.saveFile(arrayProducts);
+        response[index] = { id, ...data };
+        await this.saveFile(JSON.stringify(response));
+        return [index];
       } else {
         console.log("No se pudo encontrar el producto");
       }

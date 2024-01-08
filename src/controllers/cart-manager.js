@@ -1,19 +1,24 @@
 const fs = require("fs").promises;
+const { uuid } = require("uuidv4");
 
 class CartManager {
-  static lastId = 0;
   constructor(path) {
     this.carts = [];
     this.path = path;
+    this.getCarts();
   }
 
   async getCarts() {
-    const res = await fs.readFile(this.path, "utf8");
-    const resJSON = JSON.parse(res);
-    return resJSON;
+    try {
+      const res = await fs.readFile(this.path, "utf8");
+      const resJSON = JSON.parse(res);
+      return resJSON;
+    } catch (error) {
+      console.log("Ha ocurrido un error:", error);
+    }
   }
 
-  async saveFile(Carts) {
+  async saveFile(carts) {
     try {
       await fs.writeFile(this.path, JSON.stringify(carts, null, 2));
     } catch (error) {
@@ -22,7 +27,7 @@ class CartManager {
   }
 
   async getCartProducts(id) {
-    const carts = await this.getCarts;
+    const carts = await this.getCarts();
     const cart = carts.find((cart) => cart.id == id);
 
     if (cart) {
@@ -33,7 +38,7 @@ class CartManager {
   }
 
   async newCart() {
-    const id = ++CartManager.lastId;
+    const id = uuid();
     const newCart = { id, products: [] };
     this.carts = await this.getCarts();
     this.carts.push(newCart);
@@ -41,29 +46,21 @@ class CartManager {
     return newCart;
   }
 
-  async addProductCart(cart_id, product_id) {
-    const carts = await this.getCarts();
-    const index = carts.findIndex((cart) => cart.id == cart_id);
+  async addProductCart(cartId, productId, quantity = 1) {
+    try {
+      const carts = await this.getCarts();
+      const cart = carts.find((cart) => cart.id == cartId);
 
-    if (index !== -1) {
-      const CartProducts = await this.getCartProducts(cart_id);
-      const productIndex = CartProducts.findIndex(
-        (product) => product.product_id == product_id
-      );
-
-      if (productIndex !== -1) {
-        CartProducts[productIndex].quantity =
-          CartProducts[productIndex].quantity + 1;
+      const prodInCart = cart.products.find((p) => p.product === productId);
+      if (prodInCart) {
+        prodInCart.quantity += quantity;
       } else {
-        CartProducts.push({ product_id, quantity: 1 });
+        cart.products.push({ product: productId, quantity });
       }
-
-      carts[index].products = CartProducts;
-
-      await fs.writeFile(this.path, JSON.stringify(carts));
-      console.log("Producto agregado al carrito");
-    } else {
-      console.log("No se encontro el carrito");
+      await fs.writeFile(this.path, JSON.stringify(carts, null, 2));
+      return cart;
+    } catch (error) {
+      console.log("Ha ocurrido un error:", error);
     }
   }
 }

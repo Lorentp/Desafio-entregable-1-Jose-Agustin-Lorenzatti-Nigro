@@ -1,5 +1,5 @@
 const fs = require("fs").promises;
-
+const { uuid } = require("uuidv4");
 class ProductManager {
   static lastId = 0;
 
@@ -20,46 +20,53 @@ class ProductManager {
 
   async saveFile(arrayProducts) {
     try {
+      const res = await this.readFile(this.path, "utf8");
+
       await fs.writeFile(this.path, JSON.stringify(arrayProducts, null, 2));
     } catch (error) {
       console.log("No se pudo guardar el archivo", error);
     }
   }
 
-  async addProduct(newObj) {
-    let { title, description, price, image, code, stock, category } = newObj;
+  async addProduct({
+    title,
+    description,
+    price,
+    image,
+    code,
+    stock,
+    status = true,
+  }) {
+    try {
+      const products = await this.readFile(this.path, "utf-8");
+      const id = uuid();
+      let newProduct = {
+        title,
+        description,
+        price,
+        image,
+        code,
+        stock,
+        status,
+        id,
+      };
 
-    if (this.products.some((item) => item.code === code)) {
-      console.log("Dos productos no pueden compartir el mismo codigo.");
-      return;
+      if (products.some((item) => item.code === code)) {
+        console.log("Dos productos no pueden compartir el mismo codigo.");
+        return;
+      }
+
+      products.push(newProduct);
+
+      await this.saveFile(products);
+    } catch (error) {
+      console.log(error);
     }
-
-    const newProduct = {
-      title,
-      description,
-      price,
-      image,
-      code,
-      stock,
-      category,
-      id: ++ProductManager.lastId,
-    };
-
-    if (!Object.values(newProduct).includes(undefined)) {
-      this.products.push({ ...newProduct });
-    } else {
-      console.log(
-        "Todos los campos deben ser completados para continuar, intentalo nuevamente."
-      );
-      return;
-    }
-
-    await this.saveFile(this.products);
   }
 
   async getProducts() {
     try {
-      const response = await fs.readFile(this.products, "utf8");
+      const response = await fs.readFile(this.path, "utf8");
       const responseJSON = JSON.parse(response);
       return responseJSON;
     } catch (error) {
@@ -84,12 +91,12 @@ class ProductManager {
 
   async updateProduct(id, { ...data }) {
     try {
-      const response = await this.getProducts();
-      const index = response.findIndex((item) => item.id == id);
+      const products = await this.getProducts();
+      const index = products.findIndex((item) => item.id == id);
 
       if (index !== -1) {
-        response[index] = { id, ...data };
-        await this.saveFile(JSON.stringify(response));
+        products[index] = { id, ...data };
+        await this.saveFile(products);
         return [index];
       } else {
         console.log("No se pudo encontrar el producto");
@@ -101,13 +108,13 @@ class ProductManager {
 
   async deleteProduct(id) {
     try {
-      const oldArrayProducts = await this.readFile();
-      const index = oldArrayProducts.findIndex((item) => item.id === id);
+      const products = await this.getProducts();
+      const index = products.findIndex((product) => product.id == id);
 
       if (index !== -1) {
-        const arrayProducts = oldArrayProducts.splice(index, 1);
+        products.splice(index, 1);
 
-        await this.saveFile(arrayProducts);
+        await this.saveFile(products);
       } else {
         console.log("No se pudo encontrar el producto");
       }

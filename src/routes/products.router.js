@@ -36,10 +36,28 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    const newProduct = req.body;
-    await manager.addProduct(newProduct);
-    res.send({ status: "success", message: "Producto creado" });
-  } catch (error) {}
+    const {
+      title,
+      description,
+      price,
+      image,
+      code,
+      stock,
+      status = true,
+    } = req.body;
+    const res = await manager.addProduct({
+      title,
+      description,
+      price,
+      image,
+      code,
+      stock,
+      status,
+    });
+    res.json(res);
+  } catch (error) {
+    console.log("Ha ocurrido un error:", error);
+  }
 });
 
 router.put("/:pid", async (req, res) => {
@@ -49,11 +67,11 @@ router.put("/:pid", async (req, res) => {
     await manager.updateProduct(pid, { ...data });
     res.send({ status: "success", message: "producto actualizado" });
   } catch (error) {
-    console.log(error);
+    console.log("Ha ocurrido un error:", error);
   }
 });
 
-router.delete("/", async (res, req) => {
+router.delete("/:pid", async (req, res) => {
   const { pid } = req.params;
   try {
     await manager.deleteProduct(pid);

@@ -6,7 +6,7 @@ const manager = new CartManager("./src/models/carts.json");
 
 router.post("/", async (req, res) => {
   try {
-    await manager.newCart;
+    await manager.newCart();
     res.send({ status: "success", message: "Carrito creado" });
   } catch (error) {
     res.send("No se pudo crear el carrito");

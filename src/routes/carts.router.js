@@ -16,15 +16,19 @@ router.post("/", async (req, res) => {
 router.get("/:cid", async (req, res) => {
   const { cid } = req.params;
   try {
-    const carts = await manager.getCartsProducts(cid);
-    res.json(carts);
+    const carts = await manager.getCartProducts(cid);
+    if(carts){
+      res.json(carts);
+    }else {res.json({message: "No se encontro el carrito, revise el ID solicitado"})
   } catch (error) {
+    
     res.send("Error del servidor");
   }
 });
 
 router.post("/:cid/products/:pid", async (req, res) => {
   const { cid, pid } = req.params;
+  const { quantity } = req.body
   try {
     await manager.addProductCart(cid, pid);
     res.send("Producto agregado al carrito");

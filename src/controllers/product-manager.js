@@ -28,36 +28,37 @@ class ProductManager {
     }
   }
 
-  async addProduct({
-    title,
-    description,
-    price,
-    image,
-    code,
-    stock,
-    status = true,
-  }) {
+  async addProduct(
+    newObj
+  ) {
+    let { title, description, price, image, code, stock, status = true, category } = newObj;
     try {
       const products = await this.readFile(this.path, "utf-8");
       const id = uuid();
-      let newProduct = {
+
+      if (products.some((item) => item.code === code)) {
+        console.log("Dos productos no pueden compartir el mismo codigo.");
+        return;
+      }
+      const newProduct = {
         title,
         description,
         price,
         image,
         code,
         stock,
-        status,
+        status = true,
+        category,
         id,
       };
-
-      if (products.some((item) => item.code === code)) {
-        console.log("Dos productos no pueden compartir el mismo codigo.");
-        return;
-      }
-
+      if (!Object.values(newProduct).includes(undefined)) {
+        this.products.push({ ...newProduct });
+      } else {
+        console.log(
+          "Todos los campos deben ser completados para continuar, intentalo nuevamente."
+        );
       products.push(newProduct);
-
+      return newObj
       await this.saveFile(products);
     } catch (error) {
       console.log(error);

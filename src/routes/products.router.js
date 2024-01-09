@@ -45,7 +45,7 @@ router.post("/", async (req, res) => {
       stock,
       status = true,
     } = req.body;
-    const res = await manager.addProduct({
+    const response = await manager.addProduct({
       title,
       description,
       price,
@@ -54,7 +54,7 @@ router.post("/", async (req, res) => {
       stock,
       status,
     });
-    res.json(res);
+    res.json({message: "producto agregado con éxito", product: newObj})
   } catch (error) {
     console.log("Ha ocurrido un error:", error);
   }

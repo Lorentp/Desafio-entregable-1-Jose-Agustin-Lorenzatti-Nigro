@@ -7,6 +7,7 @@
     "code": "dead-space",
     "stock": 0,
     "status": true,
+    "category": "action",
     "id": "e4828a41-2b46-40ad-afca-c2b8d20949fb"
   },
   {
@@ -17,6 +18,7 @@
     "code": "gta-v",
     "stock": 8,
     "status": true,
+    "category": "action",
     "id": "cadba74b-835f-4ecd-be2d-a166c8ab95ed"
   },
   {
@@ -27,6 +29,7 @@
     "code": "hell-let-loose",
     "stock": 15,
     "status": true,
+    "category": "action",
     "id": "b8e71d85-9239-47b4-a4c7-bcaca0ce262a"
   },
   {
@@ -37,6 +40,7 @@
     "code": "age-of-empires-ii-de",
     "stock": 7,
     "status": true,
+    "category": "strategy"
     "id": "560988cd-297a-4c20-99a5-41d4b256d2e0"
   },
   {
@@ -47,6 +51,7 @@
     "code": "stardew-valley",
     "stock": 12,
     "status": true,
+    "category": "rpg"
     "id": "97b11d94-0ef9-4d00-aca9-7a66d54f90c6"
   },
   {
@@ -57,6 +62,7 @@
     "code": "assasins-creed-odyssey",
     "stock": 12,
     "status": true,
+    "category": "adventure"
     "id": "9b3d3304-7156-42d2-970d-fa92f8b250d9"
   },
   {
@@ -67,6 +73,7 @@
     "code": "god-of-war",
     "stock": 16,
     "status": true,
+    "category": "rpg"
     "id": "e716a136-20de-4db0-8191-14f7f45f4365"
   },
   {
@@ -77,6 +84,7 @@
     "code": "terraria",
     "stock": 7,
     "status": true,
+    "category": "survival"
     "id": "cd56f60a-bd48-4db1-823d-e5785259e147"
   },
   {
@@ -87,6 +95,7 @@
     "code": "planet-zoo",
     "stock": 5,
     "status": true,
+    "category": "simulator"
     "id": "0a0253c2-2b7f-4f2a-b29c-c72d87a5646d"
   },
   {
@@ -97,6 +106,7 @@
     "code": "total-war-rome-remastered",
     "stock": 11,
     "status": true,
+    "category": "strategy"
     "id": "2c56df95-1c6f-4afc-9eed-a000582fd46c"
   }
 ]
